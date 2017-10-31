@@ -83,11 +83,8 @@ PROCEDURE ClearWorld;
 
 
 PROCEDURE Wait (Time:INTEGER);
-          VAR Counter:INTEGER;
-              Dummy:BOOLEAN;
           BEGIN
-               FOR Counter:=0 TO Time DO
-                   Dummy:=KeyPressed;
+	       Sleep(Time / 10000.0);
           END;
 {ENDPROC}
 
