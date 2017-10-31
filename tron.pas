@@ -96,7 +96,7 @@ BEGIN
      InitGraphWin;
      ReDisplay;
      RANDOMIZE;
-     WRITELN('                  TRON');
+     WriteMoo('                  TRON');
      ClearWorld;
      Exit:=FALSE;
      WHILE NOT Exit DO
@@ -240,10 +240,9 @@ BEGIN
                       {OR World[Player2.Head.x, Player2.Head.y]  }
                       OR World[Player3.Head.x, Player3.Head.y]);
 
-                IF (World[Player1.Head.x, Player1.Head.y]) THEN WRITELN('Player one snuffs it.');
-                IF (World[Player2.Head.x, Player2.Head.y]) THEN WRITELN('Although player two *was not* smashed by a shambler',
-                                                                        ', the result was the same.');
-                IF (World[Player3.Head.x, Player3.Head.y]) THEN WRITELN('Player three isn`t as good as often believed.');
+                IF (World[Player1.Head.x, Player1.Head.y]) THEN WriteMoo('Player one snuffs it.');
+                IF (World[Player2.Head.x, Player2.Head.y]) THEN WriteMoo('Although player two *was not* smashed by a shambler the result was the same.');
+                IF (World[Player3.Head.x, Player3.Head.y]) THEN WriteMoo('Player three isn`t as good as often believed.');
                 Exit:=TRUE;
 
                 Inkey:=ReadKey;
