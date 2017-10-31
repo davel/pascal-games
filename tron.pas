@@ -199,10 +199,10 @@ BEGIN
                                             WITH Player3 DO
                                                  BEGIN
                                                       CASE Inkey OF
-                                                           '8', '8': IF (Direction.y=0) THEN NewD:=Up;
-                                                           '2', '2': IF (Direction.y=0) THEN NewD:=Down;
-                                                           '4', '4': IF (Direction.x=0) THEN NewD:=Left;
-                                                           '6', '6': IF (Direction.x=0) THEN NewD:=Right;
+                                                           '8': IF (Direction.y=0) THEN NewD:=Up;
+                                                           '2': IF (Direction.y=0) THEN NewD:=Down;
+                                                           '4': IF (Direction.x=0) THEN NewD:=Left;
+                                                           '6': IF (Direction.x=0) THEN NewD:=Right;
                                                       END;
                                                   END;
                                             {ENDWITH}
