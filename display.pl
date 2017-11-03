@@ -32,7 +32,7 @@ close $command_w;
 close $resp_r;
 
 my $app = SDLx::App->new(
-    title  => "Lunar Lander",
+    title  => "Pretend GraphWin",
     width  => 800,
     height => 600,
     depth  => 32,
