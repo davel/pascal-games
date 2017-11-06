@@ -7,6 +7,8 @@ procedure DrawOblong(x1,y1,x2,y2:integer);
 procedure EraseOblong(x1,y1,x2,y2:integer);
 procedure SetPenColour(r,g,b:byte);
 procedure SetBrushColour(r,g,b:byte);
+procedure DrawText(x,y:integer; s:string);
+procedure EraseText(x,y:integer; s:string);
 procedure ReDisplay;
 procedure WriteMoo(msg:string);
 procedure Sleep(time:real);
@@ -80,13 +82,25 @@ begin
 	BrushB := b;
 end;
 
+procedure DrawText(x,y:integer; s:string);
+begin
+end;
+
+procedure EraseText(x,y:integer; s:string);
+begin
+end;
+
 procedure ReDisplay;
 begin
 end;
 
 function KeyPressed: boolean;
+var out:integer;
 begin
-	KeyPressed := false;
+	out := 0;
+	WriteLn('{"action":"keypressed"}');
+{	ReadLn(out);}
+	KeyPressed := out <> 0;
 end;
 	
 function ReadKey: Char;
@@ -96,6 +110,7 @@ end;
 
 procedure WriteMoo(msg:string);
 begin
+	WriteLn('{"action":"writeln","string":"', msg, '"}');
 end;
 
 procedure Sleep(time:real);
