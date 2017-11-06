@@ -80,6 +80,7 @@ while (my $line = <$command_r>) {
         refresh();
     }
     elsif ($query->{action} eq 'keypressed') {
+        syswrite($resp_w, "0\n") or die $!;
     }
     else {
     }
