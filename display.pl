@@ -51,6 +51,9 @@ SDL::Video::fill_rect(
 
 my @objects;
 
+my $text_y = 0;
+my $text_height = 20;
+
 while (my $line = <$command_r>) {
     chomp $line;
     my $query = decode_json($line);
@@ -61,21 +64,46 @@ while (my $line = <$command_r>) {
         next;
     }
     elsif ($query->{action} eq 'writeln') {
-        print $query->{string};
-        print "\n";
+        my %str = (
+            action  => 'drawtext',
+            x       => 0,
+            y       => $text_y,
+            penr    => 0,
+            peng    => 0,
+            penb    => 0,
+            string  => $query->{string},
+        );
+        plot_obj(\%str);
+        SDL::Video::update_rects($app, $bg);
+        push @objects, \%str;
+        $text_y += $text_height;
+    }
+    elsif ($query->{action} eq 'drawtext') {
+        plot_obj($query);
+        SDL::Video::update_rects($app, $bg);
+        push @objects, $query;
     }
     elsif ($query->{action} eq 'drawoblong') {
         plot_obj($query);
         SDL::Video::update_rects($app, $bg);
         push @objects, $query;
     }
-    elsif ($query->{action} eq 'eraseoblong') {
+    elsif ($query->{action} eq 'eraseoblong' || $query->{action} eq 'erasetext') {
+        my $s = $query->{action};
+        $s =~ s/erase/draw/;
+        my $erase;
         COMP: for my $i (0..scalar(@objects)-1) {
-            for my $h (qw/ x1 x2 y1 y2 penr peng penb brushr brushg brushb style /) {
+            next COMP if $s ne $objects[$i]->{action};
+            for my $h (qw/ x1 x2 y1 y2 x y string penr peng penb brushr brushg brushb style /) {
+                next if !defined($query->{$h}) && !defined($objects[$i]->{$h});
                 next COMP if $query->{$h} ne $objects[$i]->{$h};
             }
             splice(@objects, $i, 1);
+            $erase = 1;
             last;
+        }
+        if (!$erase) {
+            die "could not erase $line";
         }
         refresh();
     }
@@ -87,6 +115,8 @@ while (my $line = <$command_r>) {
  
     #sleep 0.01;
 }
+
+sleep 2;
 
 waitpid($pid, 0) or die $!;
 
@@ -117,6 +147,19 @@ sub plot_obj {
             255,
         );
     }
+    elsif ($obj->{action} eq 'drawtext') {
+        SDL::GFX::Primitives::string_RGBA(
+            $app,
+            $obj->{x},
+            $obj->{y},
+            $obj->{string},
+            $obj->{penr},
+            $obj->{peng},
+            $obj->{penb},
+            255,
+        );
+    }
+
     else {
         die "unimplemented ".$obj->{action};
     }

@@ -84,10 +84,26 @@ end;
 
 procedure DrawText(x,y:integer; s:string);
 begin
+	WriteLn('{"action":"drawtext",',
+		'"x":',x,',',
+		'"y":',y,',',
+		'"penr":',PenR,',',
+		'"peng":',PenG,',',
+		'"penb":',PenB,',',
+		'"string":"',s,'"}'
+	);
 end;
 
 procedure EraseText(x,y:integer; s:string);
 begin
+	WriteLn('{"action":"erasetext",',
+		'"x":',x,',',
+		'"y":',y,',',
+		'"penr":',PenR,',',
+		'"peng":',PenG,',',
+		'"penb":',PenB,',',
+		'"string":"',s,'"}'
+	);
 end;
 
 procedure ReDisplay;
