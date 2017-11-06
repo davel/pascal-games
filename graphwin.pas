@@ -99,7 +99,8 @@ var out:integer;
 begin
 	out := 0;
 	WriteLn('{"action":"keypressed"}');
-{	ReadLn(out);}
+	Flush(output);
+	ReadLn(out);
 	KeyPressed := out <> 0;
 end;
 	
