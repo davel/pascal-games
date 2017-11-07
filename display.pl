@@ -13,7 +13,8 @@ use SDL::Image;
 use SDL::Joystick;
 use JSON::XS qw/ decode_json /;
 use POSIX ":sys_wait_h";
-use Time::HiRes qw/ sleep /;
+use Time::HiRes qw/ sleep gettimeofday tv_interval /;
+use List::Util qw/ max /;
 
 pipe(my $command_r, my $command_w) or die $!;
 pipe(my $resp_r, my $resp_w)       or die $!;
@@ -25,15 +26,41 @@ if (!$pid) {
 
     open(STDOUT, ">&", $command_w) or die $!;
     open(STDIN,  "<&", $resp_r)    or die $!;
-    exec("./tron") or die $!;
+    exec("./tetris") or die $!;
 }
 
 close $command_w;
 close $resp_r;
 
-#SDL::init_sub_system(SDL_INIT_JOYSTICK);
+SDL::init_sub_system(SDL_INIT_JOYSTICK);
 
-#my @joystick = (SDL::Joystick->new(0));
+my $key;
+
+my $num_joysticks = SDL::Joystick::num_joysticks();
+if ($num_joysticks > 3) {
+    $num_joysticks = 3;
+}
+
+my @keymap = (
+    {
+        "u" => 'q',
+        "d" => 'a',
+        "l" => 'z',
+        "r" => 'x',
+    },
+    {
+        u   => 'p',
+        d   => ';',
+        l   => '.',
+        r   => '/',
+    },
+    {
+        u   => '8',
+        d   => '2',
+        l   => '4',
+        r   => '6',
+    },
+);
 
 my $app = SDLx::App->new(
     title  => "Pretend GraphWin",
@@ -41,6 +68,15 @@ my $app = SDLx::App->new(
     height => 600,
     depth  => 32,
 );
+
+
+my @joystick = (map { SDL::Joystick->new($_) } 0..$num_joysticks );
+printf("Name: %s\n",              SDL::Joystick::name(0));
+printf("Number of Axes: %d\n",    SDL::Joystick::num_axes($joystick[0]));
+
+
+my @button_time;
+my @button;
 
 my $bg = SDL::Rect->new(0, 0, 800, 600);
 SDL::Video::fill_rect(
@@ -57,8 +93,6 @@ my $text_height = 20;
 while (my $line = <$command_r>) {
     chomp $line;
     my $query = decode_json($line);
-
-    SDL::Joystick::update();
 
     if ($query->{action} eq 'init') {
         next;
@@ -80,12 +114,10 @@ while (my $line = <$command_r>) {
     }
     elsif ($query->{action} eq 'drawtext') {
         plot_obj($query);
-        SDL::Video::update_rects($app, $bg);
         push @objects, $query;
     }
     elsif ($query->{action} eq 'drawoblong') {
         plot_obj($query);
-        SDL::Video::update_rects($app, $bg);
         push @objects, $query;
     }
     elsif ($query->{action} eq 'eraseoblong' || $query->{action} eq 'erasetext') {
@@ -108,9 +140,24 @@ while (my $line = <$command_r>) {
         refresh();
     }
     elsif ($query->{action} eq 'keypressed') {
-        syswrite($resp_w, "0\n") or die $!;
+        $key ||= joystick();
+         syswrite($resp_w, $key ? "1\n":"0\n") or die $!;
     }
+    elsif ($query->{action} eq 'readkey') {
+        syswrite($resp_w, "$key\n") or die $!;
+        $key = "";
+    }
+    elsif ($query->{action} eq 'sleep') {
+        my $t0 = [gettimeofday];
+        SDL::Video::update_rects($app, $bg);
+
+        sleep(max($query->{duration}-tv_interval($t0), 0));
+        syswrite($resp_w, "x\n") or die $!;
+    }
+
+
     else {
+        die "No action! ".$query->{action};
     }
  
     #sleep 0.01;
@@ -178,7 +225,26 @@ sub refresh {
         plot_obj($obj);
     }
 
-    SDL::Video::update_rects($app, $bg);
+    return;
+}
 
+sub joystick {
+    SDL::Joystick::update();
+    for (my $i=0; $i<$num_joysticks; $i++) {
+        $button[$i] ||= "";
+        $button_time[$i] ||= [gettimeofday];
+
+        my $dir = "";
+        $dir = 'u' if SDL::Joystick::get_button($joystick[$i], 4); 
+        $dir = 'd' if SDL::Joystick::get_button($joystick[$i], 6);
+        $dir = 'l' if SDL::Joystick::get_button($joystick[$i], 7);
+        $dir = 'r' if SDL::Joystick::get_button($joystick[$i], 5);
+        
+        if ($dir ne $button[$i] || tv_interval($button_time[$i])>0.1) {
+            $button[$i] = $dir;
+            $button_time[$i] = [gettimeofday];
+            return $keymap[$i]->{$dir};
+        }
+    }
     return;
 }

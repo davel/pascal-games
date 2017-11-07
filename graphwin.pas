@@ -113,7 +113,6 @@ end;
 function KeyPressed: boolean;
 var out:integer;
 begin
-	out := 0;
 	WriteLn('{"action":"keypressed"}');
 	Flush(output);
 	ReadLn(out);
@@ -121,8 +120,12 @@ begin
 end;
 	
 function ReadKey: Char;
+var out:Char;
 begin
-	ReadKey := 'x';
+	WriteLn('{"action":"readkey"}');
+	Flush(output);
+	ReadLn(out);
+	ReadKey := out;
 end;
 
 procedure WriteMoo(msg:string);
@@ -131,7 +134,11 @@ begin
 end;
 
 procedure Sleep(time:real);
+var out:Char;
 begin
+	WriteLn('{"action":"sleep","duration":', time, '}');
+	Flush(output);
+	ReadLn(out);
 end;
 
 begin
