@@ -947,6 +947,7 @@ procedure TGame.Poll;
                   end
                else
                    begin
+                        Sleep(0.01);
                         if (Frame=Speed) OR Fast then
                            begin
                                 if (CurrentPiece^.Move(Down, TRUE)) then
@@ -1169,7 +1170,7 @@ constructor TGame.Create(Where:TCoord);
                  Frame:=0;
                  Score:=0;
 
-                 Speed:=10000;
+                 Speed:=10;
 
                  Fast:=FALSE;
 

@@ -167,50 +167,43 @@ BEGIN
                       Player1.NewD:=Player1.Direction;
                       {Player2.NewD:=Player2.Direction; }
                       Player3.NewD:=Player3.Direction;
-                      FOR DelayLoop:=0 TO 800 DO
-                            BEGIN       
-                                 WHILE KeyPressed DO
-                                       BEGIN
-                                            Inkey:=READKEY;
-                                            {WRITE(Inkey);}
-                                            WITH Player1 DO
-                                                 BEGIN
-                                                      CASE Inkey OF
-                                                           'q', 'Q': IF (Direction.y=0) THEN NewD:=Up;
-                                                           'a', 'A': IF (Direction.y=0) THEN NewD:=Down;
-                                                           'z', 'Z': IF (Direction.x=0) THEN NewD:=Left;
-                                                           'x', 'X': IF (Direction.x=0) THEN NewD:=Right;
-                                                      END;
-                                                  END;
-                                            {ENDWITH}
-                                            WITH Player2 DO
-                                                 BEGIN
-                                                      CASE Inkey OF
-                                                           'p', 'P': IF (Direction.y=0) THEN NewD:=Up;
-                                                           ';', ':': IF (Direction.y=0) THEN NewD:=Down;
-                                                           '.', '>': IF (Direction.x=0) THEN NewD:=Left;
-                                                           '/', '?': IF (Direction.x=0) THEN NewD:=Right;
-                                                      END;
-                                                  END;
-                                            {ENDWITH}
-                                            WITH Player3 DO
-                                                 BEGIN
-                                                      CASE Inkey OF
-                                                           '8': IF (Direction.y=0) THEN NewD:=Up;
-                                                           '2': IF (Direction.y=0) THEN NewD:=Down;
-                                                           '4': IF (Direction.x=0) THEN NewD:=Left;
-                                                           '6': IF (Direction.x=0) THEN NewD:=Right;
-                                                      END;
-                                                  END;
-                                            {ENDWITH}
+                      WHILE KeyPressed DO
+                               BEGIN
+                                    Inkey:=READKEY;
+                                    {WRITE(Inkey);}
+                                    WITH Player1 DO
+                                         BEGIN
+                                              CASE Inkey OF
+                                                   'q', 'Q': IF (Direction.y=0) THEN NewD:=Up;
+                                                   'a', 'A': IF (Direction.y=0) THEN NewD:=Down;
+                                                   'z', 'Z': IF (Direction.x=0) THEN NewD:=Left;
+                                                   'x', 'X': IF (Direction.x=0) THEN NewD:=Right;
+                                              END;
+                                          END;
+                                    {ENDWITH}
+                                    WITH Player2 DO
+                                         BEGIN
+                                              CASE Inkey OF
+                                                   'p', 'P': IF (Direction.y=0) THEN NewD:=Up;
+                                                   ';', ':': IF (Direction.y=0) THEN NewD:=Down;
+                                                   '.', '>': IF (Direction.x=0) THEN NewD:=Left;
+                                                   '/', '?': IF (Direction.x=0) THEN NewD:=Right;
+                                              END;
+                                          END;
+                                    {ENDWITH}
+                                    WITH Player3 DO
+                                         BEGIN
+                                              CASE Inkey OF
+                                                   '8': IF (Direction.y=0) THEN NewD:=Up;
+                                                   '2': IF (Direction.y=0) THEN NewD:=Down;
+                                                   '4': IF (Direction.x=0) THEN NewD:=Left;
+                                                   '6': IF (Direction.x=0) THEN NewD:=Right;
+                                              END;
+                                          END;
+                                    {ENDWITH}
 
-                                       END;
-                                 {ENDWHILE}
-                            END;
-                      {NEXT}
-
-                      WAIT(10000);
-
+                               END;
+                      {ENDWHILE}
                       WITH Player1 DO
                            BEGIN
                                 Direction:=NewD;
@@ -233,6 +226,7 @@ BEGIN
                            END;
                       {ENDWITH}
 
+                      WAIT(1000);
                 UNTIL   (World[Player1.Head.x, Player1.Head.y]
                       {OR World[Player2.Head.x, Player2.Head.y]  }
                       OR World[Player3.Head.x, Player3.Head.y]);
@@ -241,8 +235,6 @@ BEGIN
                 IF (World[Player2.Head.x, Player2.Head.y]) THEN WriteMoo('Although player two *was not* smashed by a shambler the result was the same.');
                 IF (World[Player3.Head.x, Player3.Head.y]) THEN WriteMoo('Player three isn`t as good as often believed.');
                 Exit:=TRUE;
-
-                Inkey:=ReadKey;
            END;
      {ENDWHILE}
 
