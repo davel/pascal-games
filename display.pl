@@ -11,6 +11,8 @@ use SDL::Surface;
 use SDL::Rect;
 use SDL::Image;
 use SDL::Joystick;
+use SDL::Event;
+use SDL::Events;
 use JSON::XS qw/ decode_json /;
 use POSIX ":sys_wait_h";
 use Time::HiRes qw/ sleep gettimeofday tv_interval /;
@@ -19,6 +21,9 @@ use List::Util qw/ max /;
 my $game = $ARGV[0];
 
 SDL::init_sub_system(SDL_INIT_JOYSTICK);
+SDL::init_sub_system(SDL_INIT_VIDEO);
+
+my $event = SDL::Event->new();
 
 my $key;
 
@@ -172,6 +177,16 @@ while (!$exit) {
         else {
             die "No action! ".$query->{action};
         }
+        
+        SDL::Events::pump_events();
+
+        if (SDL::Events::poll_event($event)) {
+            if ($event->type == SDL_KEYDOWN) {
+                kill(15, $pid);
+                $exit = 1;
+            }
+        }
+
      
         #sleep 0.01;
     }
