@@ -16,6 +16,8 @@ use POSIX ":sys_wait_h";
 use Time::HiRes qw/ sleep gettimeofday tv_interval /;
 use List::Util qw/ max /;
 
+my $game = $ARGV[0];
+
 pipe(my $command_r, my $command_w) or die $!;
 pipe(my $resp_r, my $resp_w)       or die $!;
 
@@ -26,7 +28,7 @@ if (!$pid) {
 
     open(STDOUT, ">&", $command_w) or die $!;
     open(STDIN,  "<&", $resp_r)    or die $!;
-    exec("./tetris") or die $!;
+    exec($ARGV[0]) or die $!;
 }
 
 close $command_w;
