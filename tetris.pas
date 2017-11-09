@@ -744,7 +744,7 @@ procedure TPiece.Rotate;
              VNewPlace  :TCoord;
              Failed     :BOOLEAN;
          begin
-              WriteMoo(CHR(7));
+              {WriteMoo(CHR(7));}
               if Rotateable then
                  begin
                       Failed:=FALSE;
@@ -1281,11 +1281,11 @@ begin
               case inkey of
                    'z': Games[1]^.GoLeft;
                    'x': begin Cheat:=FALSE; Games[1]^.GoRight; end;
-                   ' ': Games[1]^.Drop;
-                   'c': Games[1]^.Rot;
+                   'a': Games[1]^.Drop;
+                   'q': Games[1]^.Rot;
                    'v': begin Cheat:=TRUE;  Games[1]^.GoRight; end;
-                   'q': if (Games[2]<>nil) then Games[2]^.Drop;
-                   'w': if (Games[3]<>nil) then Games[3]^.Drop;
+                   'g': if (Games[2]<>nil) then Games[2]^.Drop;
+                   'h': if (Games[3]<>nil) then Games[3]^.Drop;
               end;
 
               {'p': if TwoPlayer then Game2^.PushDown;

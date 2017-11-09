@@ -49,16 +49,16 @@ my @keymap = (
         "r" => 'x',
     },
     {
-        u   => 'p',
-        d   => ';',
-        l   => '.',
-        r   => '/',
-    },
-    {
         u   => '8',
         d   => '2',
         l   => '4',
         r   => '6',
+    },
+    {
+        u   => 'k',
+        d   => 'b',
+        l   => 'j',
+        r   => 'l',
     },
 );
 
@@ -68,11 +68,11 @@ my $app = SDLx::App->new(
     height => 600,
     depth  => 32,
 );
-
+# $app->fullscreen;
 
 my @joystick = (map { SDL::Joystick->new($_) } 0..$num_joysticks );
-printf("Name: %s\n",              SDL::Joystick::name(0));
-printf("Number of Axes: %d\n",    SDL::Joystick::num_axes($joystick[0]));
+printf("Name: %s\n",              SDL::Joystick::name(1));
+printf("Number of Axes: %d\n",    SDL::Joystick::num_axes($joystick[1]));
 
 
 my @button_time;
@@ -235,15 +235,24 @@ sub joystick {
         $button_time[$i] ||= [gettimeofday];
 
         my $dir = "";
-        $dir = 'u' if SDL::Joystick::get_button($joystick[$i], 4); 
-        $dir = 'd' if SDL::Joystick::get_button($joystick[$i], 6);
-        $dir = 'l' if SDL::Joystick::get_button($joystick[$i], 7);
-        $dir = 'r' if SDL::Joystick::get_button($joystick[$i], 5);
-        
-        if ($dir ne $button[$i] || tv_interval($button_time[$i])>0.1) {
+
+        if (SDL::Joystick::num_axes($joystick[$i]) == 27) {
+            $dir = 'u' if SDL::Joystick::get_button($joystick[$i], 4); 
+            $dir = 'd' if SDL::Joystick::get_button($joystick[$i], 6);
+            $dir = 'l' if SDL::Joystick::get_button($joystick[$i], 7);
+            $dir = 'r' if SDL::Joystick::get_button($joystick[$i], 5);
+        }
+        elsif (SDL::Joystick::num_axes($joystick[$i]) == 4) {
+            $dir = 'u' if SDL::Joystick::get_axis($joystick[$i], 1) < 0; 
+            $dir = 'd' if SDL::Joystick::get_axis($joystick[$i], 1) > 0;
+            $dir = 'l' if SDL::Joystick::get_axis($joystick[$i], 0) < 0;
+            $dir = 'r' if SDL::Joystick::get_axis($joystick[$i], 0) > 0;
+        }
+        print "xx $i $dir\n";
+        if ($dir ne $button[$i] || tv_interval($button_time[$i]) > 0.2 ) {
             $button[$i] = $dir;
             $button_time[$i] = [gettimeofday];
-            return $keymap[$i]->{$dir};
+            return $keymap[$i]->{$dir} if $dir ne "";
         }
     }
     return;

@@ -13,9 +13,9 @@ TYPE   Colour          =RECORD
                               r, g, b   :BYTE;
                         END;            
 
-CONST   PerimeterX      =120;
-        PerimeterY      =120;                         
-        Scale           =3;
+CONST   PerimeterX      =100;
+        PerimeterY      =100;                         
+        Scale           =5;
         Offset          :Vector=(x:50; y:50);
 
         Up              :Vector=(x: 0; y:-1);
@@ -145,7 +145,7 @@ BEGIN
                                 PlotSquare(Head);
                            END;
                       {ENDWITH}
-                      {
+                      
                       WITH Player2 DO
                            BEGIN
                                 World[Head.x, Head.y]:=TRUE;
@@ -164,8 +164,9 @@ BEGIN
                            END;
                       {ENDWITH}
 
+                      WAIT(500);
                       Player1.NewD:=Player1.Direction;
-                      {Player2.NewD:=Player2.Direction; }
+                      Player2.NewD:=Player2.Direction;
                       Player3.NewD:=Player3.Direction;
                       WHILE KeyPressed DO
                                BEGIN
@@ -184,10 +185,10 @@ BEGIN
                                     WITH Player2 DO
                                          BEGIN
                                               CASE Inkey OF
-                                                   'p', 'P': IF (Direction.y=0) THEN NewD:=Up;
-                                                   ';', ':': IF (Direction.y=0) THEN NewD:=Down;
-                                                   '.', '>': IF (Direction.x=0) THEN NewD:=Left;
-                                                   '/', '?': IF (Direction.x=0) THEN NewD:=Right;
+                                                   'k', 'K': IF (Direction.y=0) THEN NewD:=Up;
+                                                   'b', 'B': IF (Direction.y=0) THEN NewD:=Down;
+                                                   'j', 'J': IF (Direction.x=0) THEN NewD:=Left;
+                                                   'l', 'L': IF (Direction.x=0) THEN NewD:=Right;
                                               END;
                                           END;
                                     {ENDWITH}
@@ -211,7 +212,7 @@ BEGIN
                                 Head.y:=Head.y+Direction.y;
                            END;
                       {ENDWITH}
-                      {WITH Player2 DO
+                      WITH Player2 DO
                            BEGIN
                                 Direction:=NewD;
                                 Head.x:=Head.x+Direction.x;
@@ -226,9 +227,8 @@ BEGIN
                            END;
                       {ENDWITH}
 
-                      WAIT(1000);
                 UNTIL   (World[Player1.Head.x, Player1.Head.y]
-                      {OR World[Player2.Head.x, Player2.Head.y]  }
+                      OR World[Player2.Head.x, Player2.Head.y]
                       OR World[Player3.Head.x, Player3.Head.y]);
 
                 IF (World[Player1.Head.x, Player1.Head.y]) THEN WriteMoo('Player one snuffs it.');
